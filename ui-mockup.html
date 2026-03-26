@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440, initial-scale=1">
+<title>MCP Testing — UI Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #080b12;
+    --bg-primary: #0c1018;
+    --bg-surface: #111722;
+    --bg-elevated: #161d2a;
+    --bg-hover: #1c2535;
+    --border: #1e2738;
+    --border-subtle: #161d2a;
+    --text-primary: #e8edf5;
+    --text-secondary: #8494ad;
+    --text-muted: #4a5568;
+    --accent: #10b981;
+    --accent-dim: rgba(16, 185, 129, 0.12);
+    --accent-glow: rgba(16, 185, 129, 0.25);
+    --fail: #ef4444;
+    --fail-dim: rgba(239, 68, 68, 0.12);
+    --warn: #f59e0b;
+    --warn-dim: rgba(245, 158, 11, 0.12);
+    --info: #3b82f6;
+    --info-dim: rgba(59, 130, 246, 0.12);
+    --purple: #8b5cf6;
+    --mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    --sans: 'Outfit', -apple-system, sans-serif;
+    --radius: 6px;
+    --radius-lg: 10px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  /* ─── Custom Scrollbars ─── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.14); }
+  ::-webkit-scrollbar-corner { background: transparent; }
+
+  /* Firefox scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.08) transparent;
+  }
+
+  body {
+    font-family: var(--mono);
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    width: 1440px;
+    min-height: 900px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Subtle dot grid background */
+  body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(255,255,255,0.025) 1px, transparent 0);
+    background-size: 20px 20px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Dual ambient glow */
+  body::after {
+    content: '';
+    position: absolute;
+    top: -300px;
+    left: -200px;
+    width: 800px;
+    height: 800px;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(16, 185, 129, 0.035) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(59, 130, 246, 0.02) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── Top Bar ─── */
+  .topbar {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border);
+    height: 40px;
+  }
+
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: -0.3px;
+  }
+
+  .logo-icon {
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(135deg, var(--accent), #059669);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    color: #000;
+    font-family: var(--mono);
+  }
+
+  .logo span { color: var(--accent); }
+
+  .topbar-tabs {
+    display: flex;
+    gap: 2px;
+    margin-left: 24px;
+  }
+
+  .topbar-tab {
+    padding: 6px 14px;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--text-muted);
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: var(--sans);
+    transition: all 0.15s;
+  }
+
+  .topbar-tab.active {
+    color: var(--text-primary);
+    background: var(--bg-elevated);
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    background: var(--accent-dim);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 20px;
+    color: var(--accent);
+    font-size: 10.5px;
+    font-weight: 500;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--accent-glow); }
+    50% { opacity: 0.7; box-shadow: 0 0 0 4px transparent; }
+  }
+
+  /* ─── Main Layout ─── */
+  .main {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 260px 1fr 360px;
+    grid-template-rows: 1fr 44px;
+    height: calc(900px - 40px);
+  }
+
+  /* ─── Left Panel: Server Connection ─── */
+  .panel-left {
+    background: var(--bg-primary);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    grid-row: 1 / 3;
+  }
+
+  .panel-section {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .panel-section-title {
+    font-family: var(--sans);
+    font-size: 9.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.3px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .input-group {
+    margin-bottom: 8px;
+  }
+
+  .input-label {
+    font-size: 10px;
+    color: var(--text-secondary);
+    margin-bottom: 3px;
+    display: block;
+  }
+
+  .input-field {
+    width: 100%;
+    padding: 5px 8px;
+    background: var(--bg-deep);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-primary);
+    font-family: var(--mono);
+    font-size: 10.5px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .input-field:focus, .input-field.active {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-dim), inset 0 0 0 1px rgba(16, 185, 129, 0.1);
+  }
+
+  .transport-selector {
+    display: flex;
+    gap: 3px;
+    margin-bottom: 10px;
+  }
+
+  .transport-btn {
+    flex: 1;
+    padding: 4px 6px;
+    font-size: 9.5px;
+    font-weight: 600;
+    text-align: center;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--bg-surface);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-family: var(--mono);
+    transition: all 0.15s;
+  }
+
+  .transport-btn.active {
+    background: var(--accent-dim);
+    border-color: rgba(16, 185, 129, 0.35);
+    color: var(--accent);
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.1);
+  }
+
+  .server-info {
+    background: var(--bg-deep);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 8px 10px;
+    font-size: 10px;
+    line-height: 1.6;
+  }
+
+  .server-info-row {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .server-info-key { color: var(--text-muted); }
+  .server-info-val { color: var(--text-secondary); }
+  .server-info-val.highlight { color: var(--accent); }
+
+  .capabilities-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    margin-top: 4px;
+  }
+
+  .cap-badge {
+    padding: 2px 6px;
+    font-size: 9px;
+    font-weight: 500;
+    border-radius: 3px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    transition: all 0.15s;
+  }
+
+  .cap-badge.active {
+    background: var(--accent-dim);
+    border-color: rgba(16, 185, 129, 0.25);
+    color: var(--accent);
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.08);
+  }
+
+  /* ─── Center Panel: Conformance Runner ─── */
+  .panel-center {
+    background: var(--bg-surface);
+    overflow-y: auto;
+    padding: 0;
+  }
+
+  .runner-header {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    background: rgba(17, 23, 34, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .runner-title {
+    font-family: var(--sans);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .runner-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .btn {
+    padding: 4px 10px;
+    font-size: 10px;
+    font-weight: 600;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-family: var(--sans);
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #000;
+    font-weight: 700;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.2), 0 1px 2px rgba(0,0,0,0.3);
+  }
+
+  .btn-primary:hover {
+    background: #0ea571;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3), 0 1px 3px rgba(0,0,0,0.4);
+  }
+
+  .format-selector {
+    font-size: 10px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .format-opt {
+    padding: 3px 7px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .format-opt.active {
+    background: var(--bg-hover);
+    color: var(--text-secondary);
+  }
+
+  .test-category {
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 16px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .category-header:hover { background: var(--bg-hover); }
+
+  .category-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .category-chevron {
+    color: var(--text-muted);
+    font-size: 10px;
+    transition: transform 0.2s;
+  }
+
+  .category-name {
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .category-count {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .category-badge {
+    padding: 2px 8px;
+    font-size: 10px;
+    font-weight: 600;
+    border-radius: 3px;
+  }
+
+  .badge-pass { background: var(--accent-dim); color: var(--accent); }
+  .badge-fail { background: var(--fail-dim); color: var(--fail); }
+
+  .test-list {
+    padding: 0 16px 6px 16px;
+  }
+
+  .test-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 3px 0 3px 22px;
+    border-left: 1px solid var(--border-subtle);
+    margin-left: 5px;
+    opacity: 0;
+    transform: translateX(-4px);
+    animation: slideIn 0.3s ease forwards;
+  }
+
+  @keyframes slideIn {
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .test-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .test-icon {
+    font-size: 11px;
+    width: 16px;
+    text-align: center;
+  }
+
+  .test-icon.pass { color: var(--accent); }
+  .test-icon.fail { color: var(--fail); }
+
+  .test-name {
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  .test-time {
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  /* ─── Right Panel: Recording Inspector ─── */
+  .panel-right {
+    background: var(--bg-primary);
+    border-left: 1px solid var(--border);
+    overflow-y: auto;
+    grid-row: 1 / 3;
+  }
+
+  .inspector-header {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: 8px 12px;
+    background: rgba(12, 16, 24, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .inspector-tabs {
+    display: flex;
+    gap: 2px;
+  }
+
+  .inspector-tab {
+    padding: 5px 10px;
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--text-muted);
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: var(--sans);
+  }
+
+  .inspector-tab.active {
+    color: var(--text-primary);
+    background: var(--bg-elevated);
+  }
+
+  .message-timeline {
+    padding: 8px 12px;
+  }
+
+  .msg-pair {
+    position: relative;
+    margin-bottom: 8px;
+    padding-left: 18px;
+    opacity: 0;
+    animation: fadeIn 0.4s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+
+  /* Timeline connector line */
+  .msg-pair::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 8px;
+    bottom: -4px;
+    width: 1px;
+    background: var(--border);
+  }
+
+  .msg-pair:last-child::before { display: none; }
+
+  /* Timeline dot */
+  .msg-pair::after {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 7px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    border: 1.5px solid var(--info);
+    background: var(--bg-primary);
+  }
+
+  .msg-pair.response::after { border-color: var(--accent); }
+  .msg-pair.error-msg::after { border-color: var(--fail); }
+
+  .msg-direction {
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .msg-direction .arrow { font-size: 10px; }
+  .msg-direction.req { color: var(--info); }
+  .msg-direction.res { color: var(--accent); }
+
+  .msg-time {
+    font-size: 9px;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .msg-body {
+    background: var(--bg-deep);
+    border: 1px solid var(--border-subtle);
+    border-radius: 4px;
+    padding: 6px 8px;
+    font-size: 9.5px;
+    line-height: 1.45;
+    color: var(--text-secondary);
+    overflow: hidden;
+    max-height: 72px;
+  }
+
+  .msg-body .key { color: var(--purple); }
+  .msg-body .str { color: var(--accent); }
+  .msg-body .num { color: var(--warn); }
+  .msg-body .null { color: var(--text-muted); }
+
+  /* ─── Bottom Bar: Scorecard ─── */
+  .scorecard {
+    grid-column: 2 / 3;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 16px;
+    background: var(--bg-primary);
+    border-top: 1px solid var(--border);
+  }
+
+  .score-big {
+    font-family: var(--sans);
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: baseline;
+    gap: 3px;
+    text-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+  }
+
+  .score-big .total {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .score-time {
+    font-size: 10px;
+    color: var(--text-muted);
+    border-left: 1px solid var(--border);
+    padding-left: 12px;
+  }
+
+  .score-time strong {
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+
+  .score-bars {
+    flex: 1;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .score-bar-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .score-bar-label {
+    font-size: 8.5px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .score-bar-track {
+    height: 4px;
+    background: var(--bg-elevated);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .score-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    animation: growBar 0.8s ease forwards;
+    transform-origin: left;
+  }
+
+  @keyframes growBar {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+
+  .ci-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: var(--accent-dim);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: var(--radius);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--accent);
+    font-family: var(--sans);
+    white-space: nowrap;
+  }
+
+  /* Staggered animations for test items */
+  .test-item:nth-child(1) { animation-delay: 0.1s; }
+  .test-item:nth-child(2) { animation-delay: 0.2s; }
+  .test-item:nth-child(3) { animation-delay: 0.3s; }
+  .test-item:nth-child(4) { animation-delay: 0.4s; }
+  .test-item:nth-child(5) { animation-delay: 0.5s; }
+  .test-item:nth-child(6) { animation-delay: 0.6s; }
+  .test-item:nth-child(7) { animation-delay: 0.7s; }
+
+  /* Staggered animations for messages */
+  .msg-pair:nth-child(1) { animation-delay: 0.1s; }
+  .msg-pair:nth-child(2) { animation-delay: 0.25s; }
+  .msg-pair:nth-child(3) { animation-delay: 0.4s; }
+  .msg-pair:nth-child(4) { animation-delay: 0.55s; }
+  .msg-pair:nth-child(5) { animation-delay: 0.7s; }
+  .msg-pair:nth-child(6) { animation-delay: 0.85s; }
+  .msg-pair:nth-child(7) { animation-delay: 1.0s; }
+  .msg-pair:nth-child(8) { animation-delay: 1.15s; }
+
+  /* Noise texture overlay */
+  .scanline {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.35;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-size: 256px 256px;
+  }
+
+  /* GSoC watermark */
+  .watermark {
+    position: absolute;
+    bottom: 6px;
+    right: 12px;
+    font-size: 8.5px;
+    color: var(--text-muted);
+    opacity: 0.35;
+    font-family: var(--sans);
+    z-index: 10;
+    letter-spacing: 0.3px;
+  }
+</style>
+</head>
+<body>
+
+<div class="scanline"></div>
+
+<!-- ─── Top Bar ─── -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo">
+      <div class="logo-icon">M</div>
+      <span>mcp</span>-conformance
+    </div>
+    <div class="topbar-tabs">
+      <div class="topbar-tab active">Conformance</div>
+      <div class="topbar-tab">Mock Server</div>
+      <div class="topbar-tab">Recordings</div>
+      <div class="topbar-tab">CI Output</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="status-pill">
+      <div class="status-dot"></div>
+      Connected
+    </div>
+    <span style="color: var(--text-muted)">v0.1.0</span>
+  </div>
+</div>
+
+<!-- ─── Main Layout ─── -->
+<div class="main">
+
+  <!-- Left Panel: Server Connection -->
+  <div class="panel-left">
+    <div class="panel-section">
+      <div class="panel-section-title">Transport</div>
+      <div class="transport-selector">
+        <div class="transport-btn active">stdio</div>
+        <div class="transport-btn">HTTP</div>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Server Command</label>
+        <input class="input-field active" value="npx @modelcontextprotocol/server-everything" readonly>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Working Directory</label>
+        <input class="input-field" value="." readonly>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-section-title">Server Info</div>
+      <div class="server-info">
+        <div class="server-info-row">
+          <span class="server-info-key">name</span>
+          <span class="server-info-val highlight">server-everything</span>
+        </div>
+        <div class="server-info-row">
+          <span class="server-info-key">version</span>
+          <span class="server-info-val">1.0.0</span>
+        </div>
+        <div class="server-info-row">
+          <span class="server-info-key">protocol</span>
+          <span class="server-info-val highlight">2025-03-26</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-section-title">Capabilities</div>
+      <div class="capabilities-list">
+        <div class="cap-badge active">tools</div>
+        <div class="cap-badge active">resources</div>
+        <div class="cap-badge active">prompts</div>
+        <div class="cap-badge active">sampling</div>
+        <div class="cap-badge active">roots</div>
+        <div class="cap-badge active">notifications</div>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-section-title">Coverage by Primitive</div>
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px;">
+        <div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
+            <span style="font-size: 10px; color: var(--text-secondary);">Tools</span>
+            <span style="font-size: 10px; color: var(--accent);">8/8</span>
+          </div>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width: 100%; animation-delay: 0.2s;"></div></div>
+        </div>
+        <div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
+            <span style="font-size: 10px; color: var(--text-secondary);">Resources</span>
+            <span style="font-size: 10px; color: var(--accent);">4/4</span>
+          </div>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width: 100%; animation-delay: 0.4s;"></div></div>
+        </div>
+        <div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
+            <span style="font-size: 10px; color: var(--text-secondary);">Prompts</span>
+            <span style="font-size: 10px; color: var(--accent);">3/3</span>
+          </div>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width: 100%; animation-delay: 0.6s;"></div></div>
+        </div>
+        <div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
+            <span style="font-size: 10px; color: var(--text-secondary);">Sampling</span>
+            <span style="font-size: 10px; color: var(--accent);">3/3</span>
+          </div>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width: 100%; animation-delay: 0.8s;"></div></div>
+        </div>
+        <div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
+            <span style="font-size: 10px; color: var(--text-secondary);">Roots</span>
+            <span style="font-size: 10px; color: var(--accent);">2/2</span>
+          </div>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width: 100%; animation-delay: 1.0s;"></div></div>
+        </div>
+        <div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
+            <span style="font-size: 10px; color: var(--text-secondary);">Notifications</span>
+            <span style="font-size: 10px; color: var(--accent);">3/3</span>
+          </div>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width: 100%; animation-delay: 1.2s;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-section" style="border-bottom: none;">
+      <div class="panel-section-title">Output Format</div>
+      <div class="transport-selector">
+        <div class="transport-btn active">Terminal</div>
+        <div class="transport-btn">JUnit</div>
+        <div class="transport-btn">TAP</div>
+        <div class="transport-btn">JSON</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Center Panel: Conformance Runner -->
+  <div class="panel-center">
+    <div class="runner-header">
+      <div>
+        <div class="runner-title">Conformance Suite</div>
+        <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">
+          45+ tests &middot; All 6 MCP primitives
+        </div>
+      </div>
+      <div class="runner-actions">
+        <div class="btn">
+          <span style="font-size: 9px;">&#9634;</span> Stop
+        </div>
+        <div class="btn btn-primary">
+          <span style="font-size: 9px;">&#9654;</span> Run All
+        </div>
+      </div>
+    </div>
+
+    <!-- Protocol -->
+    <div class="test-category">
+      <div class="category-header">
+        <div class="category-left">
+          <span class="category-chevron">&#9660;</span>
+          <span class="category-name">Protocol</span>
+          <span class="category-count">4 tests</span>
+        </div>
+        <span class="category-badge badge-pass">4/4</span>
+      </div>
+      <div class="test-list">
+        <div class="test-item" style="animation-delay: 0.05s">
+          <div class="test-left"><span class="test-icon pass">&#10003;</span><span class="test-name">initialize returns valid result</span></div>
+          <span class="test-time">797ms</span>
+        </div>
+        <div class="test-item" style="animation-delay: 0.15s">
+          <div class="test-left"><span class="test-icon pass">&#10003;</span><span class="test-name">server reports protocol version</span></div>
+          <span class="test-time">2ms</span>
+        </div>
+        <div class="test-item" style="animation-delay: 0.25s">
+          <div class="test-left"><span class="test-icon pass">&#10003;</span><span class="test-name">server reports name and version</span></div>
+          <span class="test-time">0ms</span>
+        </div>
+        <div class="test-item" style="animation-delay: 0.35s">
+          <div class="test-left"><span class="test-icon pass">&#10003;</span><span class="test-name">capabilities is an object</span></div>
+          <span class="test-time">0ms</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Discovery -->
+    <div class="test-category">
+      <div class="category-header">
+        <div class="category-left">
+          <span class="category-chevron">&#9660;</span>
+          <span class="category-name">Discovery</span>
+          <span class="category-count">1 test</span>
+        </div>
+        <span class="category-badge badge-pass">1/1</span>
+      </div>
+      <div class="test-list">
+        <div class="test-item" style="animation-delay: 0.45s">
+          <div class="test-left"><span class="test-icon pass">&#10003;</span><span class="test-name">tools/list returns valid array</span></div>
+          <span class="test-time">2ms</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Schema -->
+    <div class="test-category">
+      <div class="category-header">
+        <div class="category-left">
+          <span class="category-chevron">&#9660;</span>
+          <span class="category-name">Schema Validation</span>
+          <span class="category-count">2 tests</span>
+        </div>
+        <span class="category-badge badge-pass">2/2</span>
+      </div>
+      <div class="test-list">
+        <div class="test-item" style="animation-delay: 0.55s">
+          <div class="test-left"><span class="test-icon pass">&#10003;</span><span class="test-name">all tools have name and description</span></div>
+          <span class="test-time">0ms</span>
+        </div>
+        <div class="test-item" style="animation-delay: 0.65s">
+          <div class="test-left"><span class="test-icon pass">&#10003;</span><span class="test-name">all tools have valid inputSchema</span></div>
+          <span class="test-time">0ms</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Execution -->
+    <div class="test-category">
+      <div class="category-header">
+        <div class="category-left">
+          <span class="category-chevron">&#9660;</span>
+          <span class="category-name">Execution</span>
+          <span class="category-count">5 tests</span>
+        </div>
+        <span class="category-badge badge-pass">5/5</span>
+      </div>
+      <div class="test-list">
+        <div class="test-item" style="animation-delay: 0.75s">
+          <div class="test-left"><span class="test-icon pass">&#10003;</span><span class="test-name">tools/call with valid params succeeds</span></div>
+          <span class="test-time">1ms</span>
+        </div>
+        <div class="test-item" style="animation-delay: 0.85s">
+          <div class="test-left"><span class="test-icon pass">&#10003;</span><span class="test-name">tools/call with unknown tool returns error</span></div>
+          <span class="test-time">0ms</span>
+        </div>
+        <div class="test-item" style="animation-delay: 0.95s">
+          <div class="test-left"><span class="test-icon pass">&#10003;</span><span class="test-name">tool result contains typed content</span></div>
+          <span class="test-time">0ms</span>
+        </div>
+        <div class="test-item" style="animation-delay: 1.05s">
+          <div class="test-left"><span class="test-icon pass">&#10003;</span><span class="test-name">tools/call to each discovered tool succeeds</span></div>
+          <span class="test-time">1015ms</span>
+        </div>
+        <div class="test-item" style="animation-delay: 1.15s">
+          <div class="test-left"><span class="test-icon pass">&#10003;</span><span class="test-name">tool content items have text field</span></div>
+          <span class="test-time">1ms</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edge Cases -->
+    <div class="test-category">
+      <div class="category-header">
+        <div class="category-left">
+          <span class="category-chevron">&#9660;</span>
+          <span class="category-name">Edge Cases</span>
+          <span class="category-count">7 tests</span>
+        </div>
+        <span class="category-badge badge-pass">7/7</span>
+      </div>
+      <div class="test-list">
+        <div class="test-item" style="animation-delay: 1.25s">
+          <div class="test-left"><span class="test-icon pass">&#10003;</span><span class="test-name">unknown method returns error code</span></div>
+          <span class="test-time">0ms</span>
+        </div>
+        <div class="test-item" style="animation-delay: 1.35s">
+          <div class="test-left"><span class="test-icon pass">&#10003;</span><span class="test-name">duplicate initialize is idempotent</span></div>
+          <span class="test-time">0ms</span>
+        </div>
+        <div class="test-item" style="animation-delay: 1.45s">
+          <div class="test-left"><span class="test-icon pass">&#10003;</span><span class="test-name">concurrent tool calls resolve independently</span></div>
+          <span class="test-time">0ms</span>
+        </div>
+        <div class="test-item" style="animation-delay: 1.55s">
+          <div class="test-left"><span class="test-icon pass">&#10003;</span><span class="test-name">tools/call with extra params does not crash</span></div>
+          <span class="test-time">0ms</span>
+        </div>
+        <div class="test-item" style="animation-delay: 1.65s">
+          <div class="test-left"><span class="test-icon pass">&#10003;</span><span class="test-name">tools/call with empty arguments object</span></div>
+          <span class="test-time">0ms</span>
+        </div>
+        <div class="test-item" style="animation-delay: 1.75s">
+          <div class="test-left"><span class="test-icon pass">&#10003;</span><span class="test-name">JSON-RPC response has correct version field</span></div>
+          <span class="test-time">0ms</span>
+        </div>
+        <div class="test-item" style="animation-delay: 1.85s">
+          <div class="test-left"><span class="test-icon pass">&#10003;</span><span class="test-name">error response includes message field</span></div>
+          <span class="test-time">0ms</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Panel: Recording Inspector -->
+  <div class="panel-right">
+    <div class="inspector-header">
+      <div class="inspector-tabs">
+        <div class="inspector-tab active">Protocol Log</div>
+        <div class="inspector-tab">Raw JSON-RPC</div>
+        <div class="inspector-tab">Diff</div>
+      </div>
+    </div>
+
+    <div class="message-timeline">
+      <!-- initialize request -->
+      <div class="msg-pair">
+        <div class="msg-direction req">
+          <span class="arrow">&rarr;</span> REQUEST
+          <span class="msg-time">0ms</span>
+        </div>
+        <div class="msg-body">
+          {<br>
+          &nbsp;&nbsp;<span class="key">"method"</span>: <span class="str">"initialize"</span>,<br>
+          &nbsp;&nbsp;<span class="key">"params"</span>: {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"protocolVersion"</span>: <span class="str">"2025-03-26"</span>,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"clientInfo"</span>: { <span class="key">"name"</span>: <span class="str">"mcp-conformance"</span> }<br>
+          &nbsp;&nbsp;}<br>
+          }
+        </div>
+      </div>
+
+      <!-- initialize response -->
+      <div class="msg-pair response">
+        <div class="msg-direction res">
+          <span class="arrow">&larr;</span> RESPONSE
+          <span class="msg-time">797ms</span>
+        </div>
+        <div class="msg-body">
+          {<br>
+          &nbsp;&nbsp;<span class="key">"protocolVersion"</span>: <span class="str">"2025-03-26"</span>,<br>
+          &nbsp;&nbsp;<span class="key">"serverInfo"</span>: {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"name"</span>: <span class="str">"server-everything"</span>,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"version"</span>: <span class="str">"1.0.0"</span><br>
+          &nbsp;&nbsp;},<br>
+          &nbsp;&nbsp;<span class="key">"capabilities"</span>: { ... }
+        </div>
+      </div>
+
+      <!-- tools/list request -->
+      <div class="msg-pair">
+        <div class="msg-direction req">
+          <span class="arrow">&rarr;</span> REQUEST
+          <span class="msg-time">799ms</span>
+        </div>
+        <div class="msg-body">
+          { <span class="key">"method"</span>: <span class="str">"tools/list"</span>, <span class="key">"params"</span>: {} }
+        </div>
+      </div>
+
+      <!-- tools/list response -->
+      <div class="msg-pair response">
+        <div class="msg-direction res">
+          <span class="arrow">&larr;</span> RESPONSE
+          <span class="msg-time">801ms</span>
+        </div>
+        <div class="msg-body">
+          {<br>
+          &nbsp;&nbsp;<span class="key">"tools"</span>: [<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;{ <span class="key">"name"</span>: <span class="str">"echo"</span>, <span class="key">"inputSchema"</span>: {...} },<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;{ <span class="key">"name"</span>: <span class="str">"add"</span>, <span class="key">"inputSchema"</span>: {...} },<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;... <span class="num">12 tools</span><br>
+          &nbsp;&nbsp;]<br>
+          }
+        </div>
+      </div>
+
+      <!-- tools/call request -->
+      <div class="msg-pair">
+        <div class="msg-direction req">
+          <span class="arrow">&rarr;</span> REQUEST
+          <span class="msg-time">803ms</span>
+        </div>
+        <div class="msg-body">
+          {<br>
+          &nbsp;&nbsp;<span class="key">"method"</span>: <span class="str">"tools/call"</span>,<br>
+          &nbsp;&nbsp;<span class="key">"params"</span>: {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"name"</span>: <span class="str">"echo"</span>,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"arguments"</span>: { <span class="key">"message"</span>: <span class="str">"test"</span> }<br>
+          &nbsp;&nbsp;}<br>
+          }
+        </div>
+      </div>
+
+      <!-- tools/call response -->
+      <div class="msg-pair response">
+        <div class="msg-direction res">
+          <span class="arrow">&larr;</span> RESPONSE
+          <span class="msg-time">804ms</span>
+        </div>
+        <div class="msg-body">
+          {<br>
+          &nbsp;&nbsp;<span class="key">"content"</span>: [{<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"type"</span>: <span class="str">"text"</span>,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"text"</span>: <span class="str">"Echo: test"</span><br>
+          &nbsp;&nbsp;}]<br>
+          }
+        </div>
+      </div>
+
+      <!-- error test request -->
+      <div class="msg-pair">
+        <div class="msg-direction req">
+          <span class="arrow">&rarr;</span> REQUEST
+          <span class="msg-time">806ms</span>
+        </div>
+        <div class="msg-body">
+          {<br>
+          &nbsp;&nbsp;<span class="key">"method"</span>: <span class="str">"tools/call"</span>,<br>
+          &nbsp;&nbsp;<span class="key">"params"</span>: { <span class="key">"name"</span>: <span class="str">"nonexistent_tool"</span> }<br>
+          }
+        </div>
+      </div>
+
+      <!-- error response -->
+      <div class="msg-pair error-msg">
+        <div class="msg-direction" style="color: var(--fail);">
+          <span class="arrow">&larr;</span> ERROR
+          <span class="msg-time">807ms</span>
+        </div>
+        <div class="msg-body" style="border-color: rgba(239,68,68,0.2);">
+          {<br>
+          &nbsp;&nbsp;<span class="key">"isError"</span>: <span class="num">true</span>,<br>
+          &nbsp;&nbsp;<span class="key">"content"</span>: [{<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"text"</span>: <span class="str">"Tool not found: nonexistent_tool"</span><br>
+          &nbsp;&nbsp;}]<br>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Scorecard -->
+  <div class="scorecard">
+    <div class="score-big">
+      19 <span class="total">/ 19 passed</span>
+    </div>
+
+    <div class="score-time">
+      <strong>1.8s</strong> total
+    </div>
+
+    <div class="score-bars">
+      <div class="score-bar-group">
+        <div class="score-bar-label">Protocol</div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width: 100%; animation-delay: 0.3s;"></div></div>
+      </div>
+      <div class="score-bar-group">
+        <div class="score-bar-label">Discovery</div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width: 100%; animation-delay: 0.4s;"></div></div>
+      </div>
+      <div class="score-bar-group">
+        <div class="score-bar-label">Schema</div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width: 100%; animation-delay: 0.5s;"></div></div>
+      </div>
+      <div class="score-bar-group">
+        <div class="score-bar-label">Exec</div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width: 100%; animation-delay: 0.6s;"></div></div>
+      </div>
+      <div class="score-bar-group">
+        <div class="score-bar-label">Edge</div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width: 100%; animation-delay: 0.7s;"></div></div>
+      </div>
+    </div>
+
+    <div class="ci-badge">
+      <span>&#10003;</span> exit 0 &middot; CI ready
+    </div>
+  </div>
+
+</div>
+
+<div class="watermark">mcp-conformance &middot; GSoC 2026 &middot; Vinícius Melo</div>
+
+</body>
+</html>

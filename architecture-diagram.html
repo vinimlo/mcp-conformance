@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400, initial-scale=1">
+<title>MCP Testing Architecture</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #0a0e1a;
+    color: #e2e8f0;
+    width: 1400px;
+    padding: 48px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+
+  .header .subtitle {
+    font-size: 14px;
+    color: #64748b;
+    font-weight: 400;
+  }
+
+  .header .subtitle a {
+    color: #60a5fa;
+    text-decoration: none;
+  }
+
+  .philosophy {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 36px;
+  }
+
+  .philosophy .pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    border-radius: 24px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .pill-blue { background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.3); color: #93c5fd; }
+  .pill-purple { background: rgba(167,139,250,0.12); border: 1px solid rgba(167,139,250,0.3); color: #c4b5fd; }
+  .pill-pink { background: rgba(244,114,182,0.12); border: 1px solid rgba(244,114,182,0.3); color: #f9a8d4; }
+
+  .pill .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+  .dot-blue { background: #60a5fa; }
+  .dot-purple { background: #a78bfa; }
+  .dot-pink { background: #f472b6; }
+
+  /* Main layout */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .package {
+    border-radius: 16px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .package::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .pkg-engine {
+    background: linear-gradient(180deg, rgba(96,165,250,0.08) 0%, rgba(15,23,42,0.6) 100%);
+    border: 1px solid rgba(96,165,250,0.2);
+  }
+  .pkg-engine::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+
+  .pkg-mock {
+    background: linear-gradient(180deg, rgba(167,139,250,0.08) 0%, rgba(15,23,42,0.6) 100%);
+    border: 1px solid rgba(167,139,250,0.2);
+  }
+  .pkg-mock::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+
+  .pkg-ui {
+    background: linear-gradient(180deg, rgba(244,114,182,0.08) 0%, rgba(15,23,42,0.6) 100%);
+    border: 1px solid rgba(244,114,182,0.2);
+  }
+  .pkg-ui::before { background: linear-gradient(90deg, #ec4899, #f472b6); }
+
+  .pkg-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .pkg-engine .pkg-label { color: #60a5fa; }
+  .pkg-mock .pkg-label { color: #a78bfa; }
+  .pkg-ui .pkg-label { color: #f472b6; }
+
+  .pkg-name {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: #f1f5f9;
+  }
+
+  .pkg-desc {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 16px;
+    line-height: 1.4;
+  }
+
+  .component {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+
+  .component:last-child { margin-bottom: 0; }
+
+  .comp-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #e2e8f0;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .comp-icon {
+    font-size: 14px;
+  }
+
+  .comp-detail {
+    font-size: 11px;
+    color: #64748b;
+    line-height: 1.5;
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .tag {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+
+  .tag-blue { background: rgba(96,165,250,0.15); color: #93c5fd; border: 1px solid rgba(96,165,250,0.2); }
+  .tag-purple { background: rgba(167,139,250,0.15); color: #c4b5fd; border: 1px solid rgba(167,139,250,0.2); }
+  .tag-pink { background: rgba(244,114,182,0.15); color: #f9a8d4; border: 1px solid rgba(244,114,182,0.2); }
+  .tag-green { background: rgba(52,211,153,0.15); color: #6ee7b7; border: 1px solid rgba(52,211,153,0.2); }
+  .tag-amber { background: rgba(251,191,36,0.15); color: #fcd34d; border: 1px solid rgba(251,191,36,0.2); }
+
+  /* Flow arrows section */
+  .flow-section {
+    margin-bottom: 24px;
+  }
+
+  .flow-title {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #475569;
+    margin-bottom: 16px;
+  }
+
+  .flow-pipeline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 20px 32px;
+    background: linear-gradient(180deg, rgba(52,211,153,0.06) 0%, rgba(15,23,42,0.4) 100%);
+    border: 1px solid rgba(52,211,153,0.15);
+    border-radius: 14px;
+  }
+
+  .flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 140px;
+  }
+
+  .flow-step-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .fsi-blue { background: rgba(96,165,250,0.2); border: 1px solid rgba(96,165,250,0.3); }
+  .fsi-green { background: rgba(52,211,153,0.2); border: 1px solid rgba(52,211,153,0.3); }
+  .fsi-purple { background: rgba(167,139,250,0.2); border: 1px solid rgba(167,139,250,0.3); }
+  .fsi-pink { background: rgba(244,114,182,0.2); border: 1px solid rgba(244,114,182,0.3); }
+  .fsi-amber { background: rgba(251,191,36,0.2); border: 1px solid rgba(251,191,36,0.3); }
+
+  .flow-step-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #cbd5e1;
+  }
+
+  .flow-step-sub {
+    font-size: 10px;
+    color: #64748b;
+    text-align: center;
+  }
+
+  .flow-arrow {
+    font-size: 20px;
+    color: rgba(52,211,153,0.4);
+    margin: 0 8px;
+    margin-bottom: 20px;
+  }
+
+  /* Bottom grid */
+  .bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .bottom-card {
+    border-radius: 14px;
+    padding: 20px;
+  }
+
+  .targets-card {
+    background: linear-gradient(180deg, rgba(52,211,153,0.06) 0%, rgba(15,23,42,0.4) 100%);
+    border: 1px solid rgba(52,211,153,0.15);
+  }
+
+  .outputs-card {
+    background: linear-gradient(180deg, rgba(251,191,36,0.06) 0%, rgba(15,23,42,0.4) 100%);
+    border: 1px solid rgba(251,191,36,0.15);
+  }
+
+  .bc-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .targets-card .bc-label { color: #34d399; }
+  .outputs-card .bc-label { color: #fbbf24; }
+
+  .bc-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .bc-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #cbd5e1;
+  }
+
+  .bc-item-icon { font-size: 14px; }
+
+  /* MCP Apps section */
+  .mcp-apps-section {
+    background: linear-gradient(180deg, rgba(251,191,36,0.06) 0%, rgba(15,23,42,0.4) 100%);
+    border: 1px solid rgba(251,191,36,0.15);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+  }
+
+  .mcp-apps-section .bc-label { color: #fbbf24; }
+
+  .apps-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+  }
+
+  .apps-check {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    font-size: 11px;
+    color: #cbd5e1;
+  }
+
+  .check-icon { color: #34d399; font-size: 13px; }
+
+  /* Footer */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .footer-left {
+    font-size: 11px;
+    color: #475569;
+  }
+
+  .footer-right {
+    display: flex;
+    gap: 16px;
+  }
+
+  .footer-stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #64748b;
+  }
+
+  .footer-stat .num {
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .num-blue { color: #60a5fa; }
+  .num-purple { color: #a78bfa; }
+  .num-green { color: #34d399; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>MCP Testing -- Protocol-First Test Harness</h1>
+  <div class="subtitle">GSoC 2026 -- API Dash | Vinicius Melo Almeida | <a href="https://github.com/vinimlo/mcp-conformance">github.com/vinimlo/mcp-conformance</a></div>
+</div>
+
+<div class="philosophy">
+  <div class="pill pill-blue"><span class="dot dot-blue"></span> Engine is the product</div>
+  <div class="pill pill-purple"><span class="dot dot-purple"></span> CI-native from day one</div>
+  <div class="pill pill-pink"><span class="dot dot-pink"></span> Record once, replay everywhere</div>
+</div>
+
+<!-- Three packages -->
+<div class="main-grid">
+
+  <!-- Package 1: mcp-conformance -->
+  <div class="package pkg-engine">
+    <div class="pkg-label">Package 1 -- npm</div>
+    <div class="pkg-name">mcp-conformance</div>
+    <div class="pkg-desc">Core testing engine. Headless-first CLI + library.</div>
+
+    <div class="component">
+      <div class="comp-title"><span class="comp-icon">&#9783;</span> Transport Adapters</div>
+      <div class="comp-detail">stdio (subprocess + readline) and Streamable HTTP behind a common connect/send/disconnect interface</div>
+    </div>
+
+    <div class="component">
+      <div class="comp-title"><span class="comp-icon">&#10003;</span> Schema Validator</div>
+      <div class="comp-detail">Validates tool definitions, inputSchema, required/optional params, capability declarations</div>
+    </div>
+
+    <div class="component">
+      <div class="comp-title"><span class="comp-icon">&#9878;</span> Assertion Framework</div>
+      <div class="comp-detail">Composable functions: protocol, schema, response, tool call assertions. Each testable independently</div>
+    </div>
+
+    <div class="component">
+      <div class="comp-title"><span class="comp-icon">&#9881;</span> Conformance Suite</div>
+      <div class="comp-detail">30+ pre-built tests across 6 categories</div>
+      <div class="tag-row">
+        <span class="tag tag-blue">Protocol</span>
+        <span class="tag tag-blue">Discovery</span>
+        <span class="tag tag-blue">Schema</span>
+        <span class="tag tag-blue">Execution</span>
+        <span class="tag tag-blue">Edge Cases</span>
+        <span class="tag tag-amber">MCP Apps</span>
+      </div>
+    </div>
+
+    <div class="component">
+      <div class="comp-title"><span class="comp-icon">&#128190;</span> Network Recorder</div>
+      <div class="comp-detail">Captures JSON-RPC traffic to .jsonl fixtures for replay</div>
+    </div>
+
+    <div class="component">
+      <div class="comp-title"><span class="comp-icon">&#9654;</span> CLI</div>
+      <div class="tag-row">
+        <span class="tag tag-green">JUnit XML</span>
+        <span class="tag tag-green">TAP</span>
+        <span class="tag tag-green">JSON</span>
+        <span class="tag tag-green">Terminal</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Package 2: mcp-mock -->
+  <div class="package pkg-mock">
+    <div class="pkg-label">Package 2 -- npm</div>
+    <div class="pkg-name">mcp-mock</div>
+    <div class="pkg-desc">Configurable mock server for client-side testing.</div>
+
+    <div class="component">
+      <div class="comp-title"><span class="comp-icon">&#128295;</span> Tool Stubs</div>
+      <div class="comp-detail">YAML-configured deterministic responses per tool</div>
+    </div>
+
+    <div class="component">
+      <div class="comp-title"><span class="comp-icon">&#9888;</span> Failure Injection</div>
+      <div class="comp-detail">Latency, error rates, timeouts, malformed responses -- chaos testing for resilience</div>
+    </div>
+
+    <div class="component">
+      <div class="comp-title"><span class="comp-icon">&#9199;</span> Replay Engine</div>
+      <div class="comp-detail">Serves recorded fixtures from mcp-conformance as deterministic sessions</div>
+    </div>
+
+    <div class="component">
+      <div class="comp-title"><span class="comp-icon">&#128196;</span> Session State</div>
+      <div class="comp-detail">Multi-turn context tracking for stateful tool call sequences</div>
+    </div>
+
+    <div class="component" style="background: rgba(167,139,250,0.08); border-color: rgba(167,139,250,0.15);">
+      <div class="comp-title" style="color: #c4b5fd;"><span class="comp-icon">&#128279;</span> Recording Pipeline</div>
+      <div class="comp-detail" style="color: #a78bfa;">mcp-conformance <b>records</b> real traffic &#8594; mcp-mock <b>replays</b> it. One flow serves both server testing and client testing.</div>
+    </div>
+  </div>
+
+  <!-- Package 3: UI -->
+  <div class="package pkg-ui">
+    <div class="pkg-label">Package 3 -- React / TypeScript</div>
+    <div class="pkg-name">MCP Testing UI</div>
+    <div class="pkg-desc">Interactive web interface. Viewer on top of the engine.</div>
+
+    <div class="component">
+      <div class="comp-title"><span class="comp-icon">&#128268;</span> Server Connection</div>
+      <div class="comp-detail">Connect via stdio command or HTTP URL. Auto-discover capabilities, tools, resources, prompts</div>
+    </div>
+
+    <div class="component">
+      <div class="comp-title"><span class="comp-icon">&#128269;</span> Tool Explorer</div>
+      <div class="comp-detail">Browse schemas, auto-generated input forms from inputSchema, execute calls, inspect responses</div>
+    </div>
+
+    <div class="component">
+      <div class="comp-title"><span class="comp-icon">&#9989;</span> Conformance Scorecard</div>
+      <div class="comp-detail">Run full suite or selected categories. Live pass/fail streaming. Coverage by category</div>
+    </div>
+
+    <div class="component">
+      <div class="comp-title"><span class="comp-icon">&#128247;</span> Recording Viewer</div>
+      <div class="comp-detail">Timeline of captured traffic, step-through replay, side-by-side diff between sessions</div>
+    </div>
+
+    <div class="component">
+      <div class="comp-title"><span class="comp-icon">&#128202;</span> Export</div>
+      <div class="comp-detail">JUnit XML, JSON, HTML reports for CI artifacts and PR attachments</div>
+    </div>
+  </div>
+</div>
+
+<!-- Recording → Replay pipeline -->
+<div class="flow-section">
+  <div class="flow-title">End-to-End Testing Pipeline</div>
+  <div class="flow-pipeline">
+    <div class="flow-step">
+      <div class="flow-step-icon fsi-green">&#128268;</div>
+      <div class="flow-step-label">Connect</div>
+      <div class="flow-step-sub">stdio or HTTP</div>
+    </div>
+    <div class="flow-arrow">&#10132;</div>
+    <div class="flow-step">
+      <div class="flow-step-icon fsi-blue">&#9878;</div>
+      <div class="flow-step-label">Discover</div>
+      <div class="flow-step-sub">tools / resources / prompts</div>
+    </div>
+    <div class="flow-arrow">&#10132;</div>
+    <div class="flow-step">
+      <div class="flow-step-icon fsi-blue">&#10003;</div>
+      <div class="flow-step-label">Validate</div>
+      <div class="flow-step-sub">schema + conformance</div>
+    </div>
+    <div class="flow-arrow">&#10132;</div>
+    <div class="flow-step">
+      <div class="flow-step-icon fsi-purple">&#128190;</div>
+      <div class="flow-step-label">Record</div>
+      <div class="flow-step-sub">JSON-RPC traffic to .jsonl</div>
+    </div>
+    <div class="flow-arrow">&#10132;</div>
+    <div class="flow-step">
+      <div class="flow-step-icon fsi-purple">&#9199;</div>
+      <div class="flow-step-label">Replay</div>
+      <div class="flow-step-sub">mock server serves fixtures</div>
+    </div>
+    <div class="flow-arrow">&#10132;</div>
+    <div class="flow-step">
+      <div class="flow-step-icon fsi-green">&#128202;</div>
+      <div class="flow-step-label">Report</div>
+      <div class="flow-step-sub">JUnit / TAP / JSON / HTML</div>
+    </div>
+  </div>
+</div>
+
+<!-- MCP Apps testing -->
+<div class="mcp-apps-section">
+  <div class="bc-label">MCP Apps Conformance Testing</div>
+  <div class="apps-grid">
+    <div class="apps-check"><span class="check-icon">&#10003;</span> ui:// resource registration</div>
+    <div class="apps-check"><span class="check-icon">&#10003;</span> MIME type validation</div>
+    <div class="apps-check"><span class="check-icon">&#10003;</span> ui/initialize handshake</div>
+    <div class="apps-check"><span class="check-icon">&#10003;</span> hostContext CSS injection</div>
+    <div class="apps-check"><span class="check-icon">&#10003;</span> CSP declaration checks</div>
+  </div>
+</div>
+
+<!-- Bottom: Targets + Outputs -->
+<div class="bottom-grid">
+  <div class="bottom-card targets-card">
+    <div class="bc-label">Targets -- Any MCP-Compliant Server</div>
+    <div class="bc-items">
+      <div class="bc-item"><span class="bc-item-icon">&#127760;</span> Cloud API servers</div>
+      <div class="bc-item"><span class="bc-item-icon">&#128193;</span> File system servers</div>
+      <div class="bc-item"><span class="bc-item-icon">&#128450;</span> Database connectors</div>
+      <div class="bc-item"><span class="bc-item-icon">&#129302;</span> AI tool servers</div>
+      <div class="bc-item"><span class="bc-item-icon">&#128640;</span> Custom MCP servers</div>
+    </div>
+  </div>
+
+  <div class="bottom-card outputs-card">
+    <div class="bc-label">CI/CD Integration -- Week 4 Midterm</div>
+    <div class="bc-items">
+      <div class="bc-item"><span class="bc-item-icon">&#128196;</span> JUnit XML</div>
+      <div class="bc-item"><span class="bc-item-icon">&#128196;</span> TAP format</div>
+      <div class="bc-item"><span class="bc-item-icon">&#128196;</span> JSON report</div>
+      <div class="bc-item"><span class="bc-item-icon">&#127912;</span> HTML report</div>
+      <div class="bc-item"><span class="bc-item-icon">&#9881;</span> GitHub Actions</div>
+      <div class="bc-item"><span class="bc-item-icon">&#9654;</span> Exit code 0/1</div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <div class="footer-left">Architecture aligns with API Dash's package pattern (curl_parser, postman, genai)</div>
+  <div class="footer-right">
+    <div class="footer-stat"><span class="num num-blue">19</span> PoC tests passing</div>
+    <div class="footer-stat"><span class="num num-purple">3</span> standalone packages</div>
+    <div class="footer-stat"><span class="num num-green">12</span> weekly PRs</div>
+  </div>
+</div>
+
+</body>
+</html>
