@@ -143,5 +143,132 @@ export async function runConformanceSuite(client: MCPClient): Promise<AssertionR
     })
   );
 
+  results.push(
+    await runAssertion("tools/call to each discovered tool succeeds", "Execution", async () => {
+      if (tools.length === 0) tools = await client.listTools();
+      for (const tool of tools) {
+        const args: Record<string, unknown> = {};
+        if (tool.inputSchema?.properties) {
+          for (const [key, schema] of Object.entries(tool.inputSchema.properties)) {
+            const s = schema as { type?: string };
+            if (s.type === "string") args[key] = "test";
+            else if (s.type === "number") args[key] = 1;
+          }
+        }
+        const result = await client.callTool(tool.name, args);
+        assertHasKey(result, "content", `${tool.name} result`);
+      }
+    })
+  );
+
+  results.push(
+    await runAssertion("tool content items have text field", "Execution", async () => {
+      if (tools.length === 0) tools = await client.listTools();
+      const result = await client.callTool(tools[0].name, buildArgs(tools[0]));
+      for (const item of result.content) {
+        if (item.type === "text") {
+          assertHasKey(item, "text", "text content item");
+          assertType(item.text, "string", "content.text");
+        }
+      }
+    })
+  );
+
+  // ── Edge Case Tests ──
+
+  results.push(
+    await runAssertion("unknown method returns error code", "Edge Cases", async () => {
+      const response = await client.sendRaw("nonexistent/method", {});
+      assert(response.error !== undefined, "Expected error for unknown method");
+      assert(response.error!.code === -32601, `Expected -32601, got ${response.error!.code}`);
+    })
+  );
+
+  results.push(
+    await runAssertion("duplicate initialize is idempotent", "Edge Cases", async () => {
+      const result1 = await client.initialize();
+      const result2 = await client.initialize();
+      assert(
+        result1.protocolVersion === result2.protocolVersion,
+        "Protocol version changed between initializations"
+      );
+      assert(
+        result1.serverInfo.name === result2.serverInfo.name,
+        "Server name changed between initializations"
+      );
+    })
+  );
+
+  results.push(
+    await runAssertion("concurrent tool calls resolve independently", "Edge Cases", async () => {
+      if (tools.length === 0) tools = await client.listTools();
+      const tool = tools[0];
+      const args = buildArgs(tool);
+
+      const [result1, result2] = await Promise.all([
+        client.callTool(tool.name, args),
+        client.callTool(tool.name, args),
+      ]);
+
+      assertHasKey(result1, "content", "concurrent result 1");
+      assertHasKey(result2, "content", "concurrent result 2");
+      assert(result1.content.length > 0, "concurrent result 1 empty");
+      assert(result2.content.length > 0, "concurrent result 2 empty");
+    })
+  );
+
+  results.push(
+    await runAssertion("tools/call with extra params does not crash", "Edge Cases", async () => {
+      if (tools.length === 0) tools = await client.listTools();
+      const tool = tools[0];
+      const args = { ...buildArgs(tool), __extra_unexpected_param__: "should be ignored" };
+      const result = await client.callTool(tool.name, args);
+      assertHasKey(result, "content", "ToolCallResult with extra params");
+    })
+  );
+
+  results.push(
+    await runAssertion("tools/call with empty arguments object", "Edge Cases", async () => {
+      if (tools.length === 0) tools = await client.listTools();
+      // Call first tool with empty args — should not crash the server
+      const result = await client.callTool(tools[0].name, {});
+      assertHasKey(result, "content", "ToolCallResult with empty args");
+    })
+  );
+
+  results.push(
+    await runAssertion("JSON-RPC response has correct version field", "Edge Cases", async () => {
+      const response = await client.sendRaw("initialize", {
+        protocolVersion: "2025-03-26",
+        capabilities: {},
+        clientInfo: { name: "test", version: "0.0.1" },
+      });
+      assert(response.jsonrpc === "2.0", `Expected jsonrpc "2.0", got "${response.jsonrpc}"`);
+    })
+  );
+
+  results.push(
+    await runAssertion("error response includes message field", "Edge Cases", async () => {
+      const response = await client.sendRaw("nonexistent/method", {});
+      assert(response.error !== undefined, "Expected error response");
+      assertHasKey(response.error, "message", "error");
+      assertType(response.error!.message, "string", "error.message");
+      assert(response.error!.message.length > 0, "Error message is empty");
+    })
+  );
+
   return results;
+}
+
+function buildArgs(tool: ToolDefinition): Record<string, unknown> {
+  const args: Record<string, unknown> = {};
+  if (tool.inputSchema?.properties) {
+    for (const [key, schema] of Object.entries(tool.inputSchema.properties)) {
+      const s = schema as { type?: string };
+      if (s.type === "string") args[key] = "test";
+      else if (s.type === "number") args[key] = 1;
+      else if (s.type === "boolean") args[key] = true;
+    }
+  }
+  return args;
 }

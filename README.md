@@ -15,7 +15,7 @@ mcp-conformance v0.1.0
 Testing: npx tsx fixtures/test-server.ts
 
 Protocol
-  ✓ initialize returns valid result (344ms)
+  ✓ initialize returns valid result (355ms)
   ✓ server reports protocol version (0ms)
   ✓ server reports name and version (0ms)
   ✓ capabilities is an object (0ms)
@@ -31,8 +31,19 @@ Execution
   ✓ tools/call with valid params succeeds (0ms)
   ✓ tools/call with unknown tool returns error (0ms)
   ✓ tool result contains typed content (0ms)
+  ✓ tools/call to each discovered tool succeeds (0ms)
+  ✓ tool content items have text field (0ms)
 
-10 passed (0.3s)
+Edge Cases
+  ✓ unknown method returns error code (0ms)
+  ✓ duplicate initialize is idempotent (0ms)
+  ✓ concurrent tool calls resolve independently (0ms)
+  ✓ tools/call with extra params does not crash (0ms)
+  ✓ tools/call with empty arguments object (0ms)
+  ✓ JSON-RPC response has correct version field (0ms)
+  ✓ error response includes message field (0ms)
+
+19 passed (0.4s)
 ```
 
 ## Architecture
@@ -41,9 +52,9 @@ Execution
 src/
 ├── transport/
 │   └── stdio.ts          # StdioTransport adapter (spawn + JSON-RPC over stdin/stdout)
-├── client.ts             # MCPClient (initialize, tools/list, tools/call)
+├── client.ts             # MCPClient (initialize, tools/list, tools/call, sendRaw)
 ├── assertions.ts         # Composable assertion functions
-├── suite.ts              # Conformance test suite (10 tests across 4 categories)
+├── suite.ts              # Conformance test suite (19 tests across 5 categories)
 └── cli.ts                # CLI entry point with colored output
 fixtures/
 └── test-server.ts        # Minimal MCP server (3 tools: greet, add, echo)
@@ -63,7 +74,8 @@ fixtures/
 | Protocol | 4 | `initialize` result structure, protocol version, server info, capabilities |
 | Discovery | 1 | `tools/list` returns valid tool array |
 | Schema | 2 | Tool definitions have name/description, valid `inputSchema` |
-| Execution | 3 | `tools/call` success, unknown tool error (-32601), typed content |
+| Execution | 5 | `tools/call` success, unknown tool error (-32601), typed content, all-tools iteration, text field validation |
+| Edge Cases | 7 | Unknown method error, duplicate init idempotency, concurrent calls, extra params, empty args, JSON-RPC version, error message format |
 
 ## Running
 

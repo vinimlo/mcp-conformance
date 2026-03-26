@@ -53,11 +53,11 @@ type ToolArgs = Record<string, unknown>;
 function handleToolCall(name: string, args: ToolArgs): { content: Array<{ type: string; text: string }> } {
   switch (name) {
     case "greet":
-      return { content: [{ type: "text", text: `Hello, ${args.name}!` }] };
+      return { content: [{ type: "text", text: `Hello, ${args.name ?? "stranger"}!` }] };
     case "add":
-      return { content: [{ type: "text", text: String(Number(args.a) + Number(args.b)) }] };
+      return { content: [{ type: "text", text: String(Number(args.a ?? 0) + Number(args.b ?? 0)) }] };
     case "echo":
-      return { content: [{ type: "text", text: String(args.message) }] };
+      return { content: [{ type: "text", text: String(args.message ?? "") }] };
     default:
       throw { code: -32601, message: `Unknown tool: ${name}` };
   }

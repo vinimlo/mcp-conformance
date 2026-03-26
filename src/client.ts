@@ -1,4 +1,4 @@
-import { TransportAdapter, JsonRpcRequest } from "./transport/stdio.js";
+import { TransportAdapter, JsonRpcRequest, JsonRpcResponse } from "./transport/stdio.js";
 
 export interface ServerCapabilities {
   tools?: Record<string, unknown>;
@@ -30,6 +30,15 @@ export interface ToolCallResult {
 
 export class MCPClient {
   constructor(private transport: TransportAdapter) {}
+
+  async sendRaw(method: string, params?: Record<string, unknown>): Promise<JsonRpcResponse> {
+    return this.transport.send({
+      jsonrpc: "2.0",
+      id: 0,
+      method,
+      params: params ?? {},
+    });
+  }
 
   async initialize(): Promise<InitializeResult> {
     const request: JsonRpcRequest = {
