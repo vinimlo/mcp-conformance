@@ -1,0 +1,20 @@
+{
+  "name": "mcp-conformance",
+  "version": "0.1.0",
+  "description": "Protocol-first conformance testing for MCP servers",
+  "type": "module",
+  "bin": {
+    "mcp-conformance": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node --loader ts-node/esm src/cli.ts",
+    "test": "node --loader ts-node/esm src/cli.ts --server 'npx tsx fixtures/test-server.ts'"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "ts-node": "^10.9.0",
+    "tsx": "^4.7.0",
+    "@types/node": "^20.0.0"
+  }
+}
