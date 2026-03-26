@@ -8,6 +8,8 @@ Protocol-first conformance testing for MCP (Model Context Protocol) servers.
 
 Connects to any MCP server via stdio, runs a suite of conformance tests, and reports pass/fail results. Designed for CI pipelines (exit code 1 on failure) and interactive use (colored terminal output).
 
+[![asciicast](https://asciinema.org/a/Ifkx2TysVgMTVwcA.svg)](https://asciinema.org/a/Ifkx2TysVgMTVwcA)
+
 ```
 $ npx tsx src/cli.ts --server "npx tsx fixtures/test-server.ts"
 
