@@ -8,7 +8,9 @@ Protocol-first conformance testing for MCP (Model Context Protocol) servers.
 
 Connects to any MCP server via stdio, runs a suite of conformance tests, and reports pass/fail results. Designed for CI pipelines (exit code 1 on failure) and interactive use (colored terminal output).
 
-[![asciicast](https://asciinema.org/a/Ifkx2TysVgMTVwcA.svg)](https://asciinema.org/a/Ifkx2TysVgMTVwcA)
+### Demo: 19/19 against test fixture
+
+[![asciicast](https://asciinema.org/a/HzXJlnMZkkGMGs44.svg)](https://asciinema.org/a/HzXJlnMZkkGMGs44)
 
 ```
 $ npx tsx src/cli.ts --server "npx tsx fixtures/test-server.ts"
@@ -47,6 +49,12 @@ Edge Cases
 
 19 passed (0.4s)
 ```
+
+### Demo: 19/19 against `@modelcontextprotocol/server-everything`
+
+[![asciicast](https://asciinema.org/a/0mCL9XRgBL18t0bT.svg)](https://asciinema.org/a/0mCL9XRgBL18t0bT)
+
+Tested against the official MCP SDK reference server. The unknown-tool test accepts both error reporting mechanisms: JSON-RPC protocol errors (`-32602`) per the spec example, and tool execution errors (`isError: true`) as used by `server-everything` — surfacing a real spec ambiguity in how unknown tools should be reported.
 
 ## Architecture
 

@@ -113,10 +113,19 @@ export async function runConformanceSuite(client: MCPClient): Promise<AssertionR
   results.push(
     await runAssertion("tools/call with unknown tool returns error", "Execution", async () => {
       try {
-        await client.callTool("__nonexistent_tool_12345__");
-        assert(false, "Expected error for unknown tool, but call succeeded");
+        const result = await client.callTool("__nonexistent_tool_12345__");
+        // MCP spec lists unknown tools under Protocol Errors (JSON-RPC error with -32602),
+        // but some servers return a successful result with isError: true instead.
+        // Both are acceptable — but the server MUST signal an error through one mechanism.
+        assert(
+          result.isError === true,
+          "Expected JSON-RPC error (-32602) or tool result with isError: true for unknown tool"
+        );
       } catch (err) {
-        assertErrorCode(err, -32601);
+        // Server returned a JSON-RPC protocol error — validate the code.
+        // Per MCP spec example: -32602 (Invalid params), NOT -32601 (Method not found),
+        // because tools/call IS the method — the tool name is the invalid parameter.
+        assertErrorCode(err, -32602);
       }
     })
   );

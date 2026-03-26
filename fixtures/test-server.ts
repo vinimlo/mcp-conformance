@@ -59,7 +59,9 @@ function handleToolCall(name: string, args: ToolArgs): { content: Array<{ type: 
     case "echo":
       return { content: [{ type: "text", text: String(args.message ?? "") }] };
     default:
-      throw { code: -32601, message: `Unknown tool: ${name}` };
+      // Per MCP spec: unknown tool is -32602 (Invalid params), not -32601 (Method not found).
+      // tools/call IS the method — the tool name is the invalid parameter.
+      throw { code: -32602, message: `Unknown tool: ${name}` };
   }
 }
 
